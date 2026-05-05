@@ -4,6 +4,11 @@ const fetch = require("node-fetch");
 const TOKEN = process.env.TOKEN;
 const CHAT_ID = process.env.CHAT_ID;
 
+console.log("TOKEN existe:", !!TOKEN);
+console.log("TOKEN largo:", TOKEN ? TOKEN.length : 0);
+console.log("TOKEN empieza:", TOKEN ? TOKEN.slice(0, 5) : "VACIO");
+console.log("CHAT_ID:", CHAT_ID);
+
 const LINKS = {
   "21": "https://www.allaccess.com.ar/event/bts-21-de-octubre",
   "23": "https://www.allaccess.com.ar/event/bts-23-de-octubre",
@@ -18,7 +23,10 @@ const estadoPrevio = {
 
 // 📲 Telegram
 async function enviarTelegram(msg) {
-  const url = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
+  const cleanToken = String(TOKEN || "").trim();
+  const cleanChatId = String(CHAT_ID || "").trim();
+
+  const url = `https://api.telegram.org/bot${cleanToken}/sendMessage`;
 
   try {
     const response = await fetch(url, {
@@ -26,22 +34,22 @@ async function enviarTelegram(msg) {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded"
       },
-      body: `chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}`
+      body: `chat_id=${cleanChatId}&text=${encodeURIComponent(msg)}`
     });
 
     const data = await response.json();
 
     if (!data.ok) {
       console.log("Telegram respondió error:", data);
+      console.log("TOKEN largo usado:", cleanToken.length);
+      console.log("TOKEN inicio usado:", cleanToken.slice(0, 5));
     } else {
       console.log("Telegram enviado OK");
     }
-
   } catch (err) {
     console.log("Error enviando Telegram:", err.message);
   }
 }
-
 // 🔎 Analizar página real
 async function analizarPagina(page, fecha, link) {
   try {
@@ -127,8 +135,8 @@ async function main() {
       console.log("Error general:", err);
     }
 
-    // ⏱ cada 5 minutos
-    await new Promise(r => setTimeout(r, 300000));
+    // ⏱ cada 3 minutos
+    await new Promise(r => setTimeout(r, 180000));
   }
 }
 
