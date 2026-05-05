@@ -1,0 +1,12 @@
+{
+  "name": "bts-bot",
+  "version": "1.0.0",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "dependencies": {
+    "puppeteer": "^22.0.0",
+    "node-fetch": "^2.6.7"
+  }
+}
