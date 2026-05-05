@@ -21,16 +21,24 @@ async function enviarTelegram(msg) {
   const url = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
 
   try {
-    await fetch(url, {
+    const response = await fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: CHAT_ID,
-        text: msg
-      })
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: `chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}`
     });
+
+    const data = await response.json();
+
+    if (!data.ok) {
+      console.log("Telegram respondió error:", data);
+    } else {
+      console.log("Telegram enviado OK");
+    }
+
   } catch (err) {
-    console.log("Error Telegram:", err);
+    console.log("Error enviando Telegram:", err.message);
   }
 }
 
